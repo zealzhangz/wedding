@@ -36,7 +36,7 @@ public class ConfigController {
         TreeMap<String, Object> params = new TreeMap<String, Object>();
         JsTicketResp resp = accessTokenHelper.jsapiTicketCache();
         if(resp != null && resp.getTicket() != null){
-            params.put("jsapi_ticket", accessTokenHelper.jsapiTicketCache().getTicket());
+            params.put("jsapi_ticket", resp.getTicket());
             params.put("noncestr", configRes.getNonceStr());
             params.put("timestamp", configRes.getTimestamp());
             params.put("url", url);

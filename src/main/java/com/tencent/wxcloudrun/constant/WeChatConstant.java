@@ -40,7 +40,7 @@ public interface WeChatConstant {
      */
     String ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={1}&secret={2}";
 
-    String JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket={1}&type=jsapi";
+    String JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={1}&type=jsapi";
 
 
     /**

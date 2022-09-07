@@ -32,14 +32,15 @@ public class AccessTokenHelper {
      */
     public AccessTokenResp fetchAccessToken() {
         AccessTokenResp token = null;
+        Long now = System.currentTimeMillis();
         if (map.get("accessTokenCache") != null) {
             token = (AccessTokenResp) map.get("accessTokenCache");
-            Long now = System.currentTimeMillis();
             //提前一分钟生成缓存
             if (now > (token.getExpiresIn() - 60 * 1000)) {
                 //重新获取token
                 token = restTemplate.getForObject(ACCESS_TOKEN_URL, AccessTokenResp.class, APP_ID, APP_SECRET);
                 if (token.getAccessToken() != null) {
+                    token.setExpiresIn(now + token.getExpiresIn() * 1000);
                     map.put("accessTokenCache", token);
                 } else {
                     log.error("get accessToken error >>>>>>>>>>>>>>>>>>>>>>[{}]", token.toString());
@@ -63,27 +64,36 @@ public class AccessTokenHelper {
 
     public JsTicketResp jsapiTicketCache() {
         JsTicketResp ticket = null;
+        AccessTokenResp token = fetchAccessToken();
+        Long now = System.currentTimeMillis();
         if (map.get("jsapiTicketCache") != null) {
             ticket = (JsTicketResp) map.get("jsapiTicketCache");
-            Long now = System.currentTimeMillis();
             //提前一分钟生成缓存
             if (now > (ticket.getExpiresIn() - 60 * 1000)) {
-                //重新获取token
-                ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, fetchAccessToken().getAccessToken());
-                if (ticket.getTicket() != null) {
-                    map.put("jsapiTicketCache", ticket);
+                if(token != null && token.getAccessToken() != null){
+                    //重新获取token
+                    ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, token.getAccessToken());
+                    if (ticket.getTicket() != null) {
+                        //设置过期绝对时间
+                        ticket.setExpiresIn(now + ticket.getExpiresIn() * 1000);
+                        map.put("jsapiTicketCache", ticket);
+                    } else {
+                        log.error("get jsapi ticket error >>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());
+                        return null;
+                    }
                 } else {
-                    log.error("get jsapi ticket error >>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());
+                    log.error("get access token error");
                     return null;
                 }
             } else {
                 return ticket;
             }
         } else {
-            AccessTokenResp token = fetchAccessToken();
             if (token != null && token.getAccessToken() != null) {
-                ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, fetchAccessToken().getAccessToken());
-                if (ticket != null) {
+                ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, token.getAccessToken());
+                if (ticket.getTicket() != null) {
+                    //设置过期绝对时间
+                    ticket.setExpiresIn(now + ticket.getExpiresIn() * 1000);
                     map.put("jsapiTicketCache", ticket);
                 } else {
                     log.error("get jsapi ticket error >>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());

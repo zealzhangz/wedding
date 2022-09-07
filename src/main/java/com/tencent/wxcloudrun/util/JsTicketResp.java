@@ -1,5 +1,6 @@
 package com.tencent.wxcloudrun.util;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -18,7 +19,8 @@ public class JsTicketResp implements Serializable {
     /**
      * 正确获取到 access_token 时有值
      */
-    private Integer expiresIn;
+    @JsonProperty(value = "expires_in")
+    private Long expiresIn;
     /**
      *  出错时有值
      */
@@ -27,8 +29,4 @@ public class JsTicketResp implements Serializable {
      * 出错时有值
      */
     private String errmsg;
-    /**
-     * 正确获取到 ticket 时有值，存放过期时间
-     */
-    private Long expiredTime;
 }
