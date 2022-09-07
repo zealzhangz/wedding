@@ -33,7 +33,7 @@ public class ConfigController {
         ConfigRes configRes = new ConfigRes();
         configRes.setAppId(APP_ID);
         configRes.setNonceStr(StringKit.genRandomString32());
-        configRes.setTimestamp(String.valueOf(System.currentTimeMillis()));
+        configRes.setTimestamp(String.valueOf(System.currentTimeMillis()/1000));
 
         TreeMap<String, Object> params = new TreeMap<String, Object>();
         JsTicketResp resp = accessTokenHelper.jsapiTicketCache();
