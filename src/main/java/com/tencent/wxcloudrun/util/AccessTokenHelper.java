@@ -52,6 +52,7 @@ public class AccessTokenHelper {
         } else {
             token = restTemplate.getForObject(ACCESS_TOKEN_URL, AccessTokenResp.class, APP_ID, APP_SECRET);
             if (token.getAccessToken() != null) {
+                token.setExpiresIn(now + token.getExpiresIn() * 1000);
                 map.put("accessTokenCache", token);
             } else {
                 log.error("get accessToken error >>>>>>>>>>>>>>>>>>>>>>[{}]", token.toString());

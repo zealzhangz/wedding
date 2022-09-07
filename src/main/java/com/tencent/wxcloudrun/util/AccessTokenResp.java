@@ -34,8 +34,8 @@ public class AccessTokenResp implements Serializable {
     private Long expiresIn;
 
     @JsonProperty(value = "errcode")
-    private Integer errCode;
+    private Integer errcode;
 
     @JsonProperty(value = "errmsg")
-    private String errMsg;
+    private String errmsg;
 }
