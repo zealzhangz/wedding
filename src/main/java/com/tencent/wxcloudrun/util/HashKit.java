@@ -52,13 +52,15 @@ public class HashKit {
 		StringBuffer sbkey = new StringBuffer();
 		for (String key : params.keySet()) {
 			String value = (String) params.get(key);
-			if (!"sign".equals(key) && StringUtils.isNotBlank(value)) {
+			if (StringUtils.isNotBlank(value)) {
 				sbkey.append(key + "=" + value + "&");
 			}
 		}
 		sbkey = sbkey.deleteCharAt(sbkey.length() - 1);
+		String sha1Str = sha1(sbkey.toString());
 		log.info(sbkey.toString());
-		return sha1(sbkey.toString());
+		log.info("sha1Str:" + sha1Str);
+		return sha1Str;
 	}
 	
 	public static String hash(String algorithm, String srcStr) {
