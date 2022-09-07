@@ -28,7 +28,7 @@ public class ConfigController {
     @CrossOrigin
     @GetMapping(value = "/api/config")
     ApiResponse config(HttpServletRequest request) {
-        String url = request.getScheme() + "://" + request.getServerName() + request.getServletPath();
+        String url = "https://zhangaoo.com/wedding/";
         logger.info("request url:" + url);
         ConfigRes configRes = new ConfigRes();
         configRes.setAppId(APP_ID);
