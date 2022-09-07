@@ -16,11 +16,13 @@
 
 package com.tencent.wxcloudrun.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.util.TreeMap;
 
+@Slf4j
 public class HashKit {
 	
 	private static final java.security.SecureRandom random = new java.security.SecureRandom();
@@ -55,6 +57,7 @@ public class HashKit {
 			}
 		}
 		sbkey = sbkey.deleteCharAt(sbkey.length() - 1);
+		log.info(sbkey.toString());
 		return sha1(sbkey.toString());
 	}
 	
