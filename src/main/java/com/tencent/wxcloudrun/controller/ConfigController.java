@@ -1,10 +1,7 @@
 package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.config.ApiResponse;
-import com.tencent.wxcloudrun.util.AccessTokenHelper;
-import com.tencent.wxcloudrun.util.ConfigRes;
-import com.tencent.wxcloudrun.util.HashKit;
-import com.tencent.wxcloudrun.util.StringKit;
+import com.tencent.wxcloudrun.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +34,18 @@ public class ConfigController {
         configRes.setTimestamp(String.valueOf(System.currentTimeMillis()));
 
         TreeMap<String, Object> params = new TreeMap<String, Object>();
-        params.put("jsapi_ticket", accessTokenHelper.jsapiTicketCache().getTicket());
-        params.put("noncestr", configRes.getNonceStr());
-        params.put("timestamp", configRes.getTimestamp());
-        params.put("url", url);
+        JsTicketResp resp = accessTokenHelper.jsapiTicketCache();
+        if(resp != null && resp.getTicket() != null){
+            params.put("jsapi_ticket", accessTokenHelper.jsapiTicketCache().getTicket());
+            params.put("noncestr", configRes.getNonceStr());
+            params.put("timestamp", configRes.getTimestamp());
+            params.put("url", url);
 
-        configRes.setSignature(HashKit.signSHA1(params));
-        return ApiResponse.ok(configRes);
+            configRes.setSignature(HashKit.signSHA1(params));
+            return ApiResponse.ok(configRes);
+        } else {
+            logger.error("获取 ticket 失败");
+            return ApiResponse.error("获取 ticket 失败");
+        }
     }
 }

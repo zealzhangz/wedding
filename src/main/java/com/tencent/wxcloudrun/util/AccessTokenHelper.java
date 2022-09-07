@@ -39,13 +39,23 @@ public class AccessTokenHelper {
             if (now > (token.getExpiresIn() - 60 * 1000)) {
                 //重新获取token
                 token = restTemplate.getForObject(ACCESS_TOKEN_URL, AccessTokenResp.class, APP_ID, APP_SECRET);
-                map.put("accessTokenCache", token);
+                if(token.getAccessToken() != null){
+                    map.put("accessTokenCache", token);
+                } else {
+                    log.error("get accessToken error >>>>>>>>>>>>>>>>>>>>>>[{}]", token.toString());
+                    return null;
+                }
             } else {
                 return token;
             }
         } else {
             token = restTemplate.getForObject(ACCESS_TOKEN_URL, AccessTokenResp.class, APP_ID, APP_SECRET);
-            map.put("accessTokenCache", token);
+            if(token.getAccessToken() != null){
+                map.put("accessTokenCache", token);
+            } else {
+                log.error("get accessToken error >>>>>>>>>>>>>>>>>>>>>>[{}]", token.toString());
+                return null;
+            }
         }
         log.info("get accessToken method from Tencent>>>>>>>>>>>>>>>>>>>>>>[{}]", token.toString());
         return token;
@@ -60,13 +70,29 @@ public class AccessTokenHelper {
             if (now > (ticket.getExpiresIn() - 60 * 1000)) {
                 //重新获取token
                 ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, fetchAccessToken().getAccessToken());
-                map.put("jsapiTicketCache", ticket);
+                if(ticket.getTicket() != null){
+                    map.put("jsapiTicketCache", ticket);
+                } else {
+                    log.error("get jsapi ticket error >>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());
+                    return null;
+                }
             } else {
                 return ticket;
             }
         } else {
-            ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, fetchAccessToken().getAccessToken());
-            map.put("jsapiTicketCache", ticket);
+            AccessTokenResp token = fetchAccessToken();
+            if(token != null && token.getAccessToken() != null){
+                ticket = restTemplate.getForObject(JSAPI_TICKET_URL, JsTicketResp.class, fetchAccessToken().getAccessToken());
+                if(ticket != null){
+                    map.put("jsapiTicketCache", ticket);
+                } else {
+                    log.error("get jsapi ticket error >>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());
+                    return null;
+                }
+            } else {
+                log.error("get access token error");
+                return null;
+            }
         }
         log.info("get jsapiTicket method from Tencent>>>>>>>>>>>>>>>>>>>>>>[{}]", ticket.toString());
         return ticket;
