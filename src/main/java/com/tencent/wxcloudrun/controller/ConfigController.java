@@ -26,8 +26,8 @@ public class ConfigController {
     
     @GetMapping(value = "/api/config")
     ApiResponse config(HttpServletRequest request) {
-        logger.info("/api/config get request");
-        String url = "http://" + request.getServerName() + request.getServletPath();
+        String url = "http://" + request.getServerName() + request.getServletPath() + "/api/config";
+        logger.info("/api/config get request,url:" + url);
         ConfigRes configRes = new ConfigRes();
         configRes.setAppId(APP_ID);
         configRes.setNonceStr(StringKit.genRandomString32());
