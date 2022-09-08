@@ -17,6 +17,12 @@
         WHERE deleted = '0'
     </select>
 
+    <select id="selectBarrageByText" parameterType="java.lang.String" resultMap="barrageResult">
+        SELECT `id`, `text`, `ip`,`createdAt`, `updatedAt`
+        FROM barrage
+        WHERE deleted = '0' AND text = #{text}
+    </select>
+
     <delete id="deleteBarrage" parameterType="java.lang.String">
         DELETE
         FROM barrage

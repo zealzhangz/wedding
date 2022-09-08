@@ -28,6 +28,11 @@ public class BarrageServiceImpl implements BarrageService {
     }
 
     @Override
+    public List<Barrage> selectBarrageByText(String text) {
+        return barrageMapper.selectBarrageByText(text);
+    }
+
+    @Override
     public void insertBarrage(Barrage barrage) {
         barrageMapper.insertBarrage(barrage);
     }

@@ -12,6 +12,8 @@ import java.util.List;
 public interface BarrageService {
     List<Barrage> getBarrageList();
 
+    List<Barrage> selectBarrageByText(String text);
+    
     void insertBarrage(Barrage barrage);
     
     void deleteBarrage(String text);

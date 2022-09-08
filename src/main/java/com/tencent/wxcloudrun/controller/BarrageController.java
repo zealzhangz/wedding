@@ -56,10 +56,14 @@ public class BarrageController {
     ApiResponse create(@RequestBody BarrageRequest request, HttpServletRequest req) {
         logger.info("/api/comment post request, action: {}", request.getText());
         if (request != null && request.getText() != null && StringUtils.isNotBlank(request.getText().trim())) {
+            List<Barrage> exist = barrageService.selectBarrageByText(request.getText().trim());
+            if(!exist.isEmpty()){
+                return ApiResponse.error(request.getText().trim() + "已经存在");
+            }
             Barrage barrage = new Barrage();
             barrage.setText(request.getText().trim());
             barrage.setDeleted(0);
-            barrage.setIp(req.getRemoteAddr());
+            barrage.setIp(getUserIp(req));
             try {
                 barrageService.insertBarrage(barrage);
                 return ApiResponse.ok("insert " + request.getText().trim() + "success");
@@ -71,6 +75,23 @@ public class BarrageController {
             logger.info("无效的评论");
             return ApiResponse.error("无效的评论");
         }
+    }
+
+    private String getUserIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-real-ip");//先从nginx自定义配置获取  
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("x-forwarded-for");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
     }
 
     /**

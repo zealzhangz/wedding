@@ -12,6 +12,8 @@ public interface BarrageMapper {
 
   List<Barrage> getBarrageList();
 
+  List<Barrage> selectBarrageByText(String text);
+
   void insertBarrage(Barrage barrage);
   
   void deleteBarrage(String text);
