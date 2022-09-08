@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.dao.BarrageMapper">
+
+    <resultMap id="barrageResult" type="com.tencent.wxcloudrun.model.Barrage">
+        <id property="id" column="id"/>
+        <result property="text" column="text"/>
+        <result property="ip" column="ip"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime" />
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />
+    </resultMap>
+
+    <select id="getBarrageList" resultMap="barrageResult">
+        SELECT `id`, `text`, `ip`,`createdAt`, `updatedAt`
+        FROM barrage
+        WHERE deleted = '0'
+    </select>
+
+    <delete id="deleteBarrage" parameterType="java.lang.String">
+        DELETE
+        FROM barrage
+        where text = #{text}
+    </delete>
+
+    <update id="insertBarrage" parameterType="com.tencent.wxcloudrun.model.Barrage">
+        INSERT INTO `barrage`(`id`, `text`,`ip`,`deleted`)
+        VALUE(#{id}, #{text},#{ip},'0')
+    </update>
+
+</mapper>

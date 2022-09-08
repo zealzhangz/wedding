@@ -50,4 +50,6 @@ public class ConfigController {
             return ApiResponse.error("获取 ticket 失败");
         }
     }
+    
+    
 }
