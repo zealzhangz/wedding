@@ -3,6 +3,7 @@ package com.tencent.wxcloudrun.service.impl;
 import com.tencent.wxcloudrun.dao.BarrageMapper;
 import com.tencent.wxcloudrun.model.Barrage;
 import com.tencent.wxcloudrun.service.BarrageService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version Version: 0.0.1
  * @date DateTime: 2022/09/08 11:29:00<br/>
  */
+@Slf4j
 @Service
 public class BarrageServiceImpl implements BarrageService {
     
     final BarrageMapper barrageMapper;
 
-    private Map<String, Object> cache = new ConcurrentHashMap<>();
+    private Map<String, List<Barrage>> cache = new ConcurrentHashMap<>();
 
     public BarrageServiceImpl(@Autowired BarrageMapper barrageMapper) {
         this.barrageMapper = barrageMapper;
@@ -31,7 +33,7 @@ public class BarrageServiceImpl implements BarrageService {
 
     @Override
     public List<Barrage> getBarrageList() {
-        List<Barrage> barrages = (List<Barrage>)cache.get("barrage");
+        List<Barrage> barrages = cache.get("barrage");
         if(barrages != null && !barrages.isEmpty()){
             return barrages;
         } else {
@@ -56,12 +58,18 @@ public class BarrageServiceImpl implements BarrageService {
             if(cache.isEmpty()){
                 cache.put("barrage",Arrays.asList(barrage));
             } else {
-                List<Barrage> barrages = (List<Barrage>)cache.get("barrage");
-                barrages.add(barrage);
-                cache.put("barrage",barrages);
+                List<Barrage> barrages = cache.get("barrage");
+                if(barrages != null){
+                    barrages.add(barrage);
+                    cache.put("barrage",barrages);
+                } else {
+                    log.info("barrage cache is null");
+                }
             }
+            barrageMapper.insertBarrage(barrage);
+        } else {
+            log.info("弹幕写入数据库，弹幕数据无效");
         }
-        barrageMapper.insertBarrage(barrage);
     }
 
     @Override
