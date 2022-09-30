@@ -95,7 +95,13 @@ public class RequestReplyMsgService {
                     robotOwnThinkRes.getData() != null && 
                     robotOwnThinkRes.getData().getInfo() != null &&
                     robotOwnThinkRes.getData().getInfo().getText() != null){
-                return robotOwnThinkRes.getData().getInfo().getText();
+                String response = robotOwnThinkRes.getData().getInfo().getText();
+                if(robotOwnThinkRes.getData().getInfo().getHeuristic() != null && 
+                        !robotOwnThinkRes.getData().getInfo().getHeuristic().isEmpty()){
+                    response += String.join(",", robotOwnThinkRes.getData().getInfo().getHeuristic());
+                }
+                
+                return response;
             }
         }
         return null;
