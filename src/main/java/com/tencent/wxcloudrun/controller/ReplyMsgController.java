@@ -1,14 +1,20 @@
 package com.tencent.wxcloudrun.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.tencent.wxcloudrun.service.RequestAndResponseService;
+import com.tencent.wxcloudrun.service.RequestReplyMsgService;
 import com.tencent.wxcloudrun.util.HashKit;
+import com.tencent.wxcloudrun.util.RequestAndResponseUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 
 /**
@@ -20,6 +26,10 @@ import java.util.Arrays;
 @CrossOrigin
 @RestController
 public class ReplyMsgController {
+//    @Autowired
+//    private RequestReplyMsgService requestReplyMsgService;
+    @Autowired    
+    private RequestAndResponseService requestAndResponseService;
     /**
      * token值必须和微信公众号中配置的完全一致！！！
      */
@@ -31,6 +41,37 @@ public class ReplyMsgController {
                @RequestParam(value = "nonce") String nonce,
                @RequestParam(value = "echostr") String echostr) {
         return wxSignatureCheck(signature, timestamp, nonce, echostr);
+    }
+
+    @PostMapping(value = "/api/reply")
+    void reply(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        String result = "";
+        try {
+            //解析微信发来的请求
+            Map<String, String> map = RequestAndResponseUtil.parseXml(request);
+            log.info("开始构造消息：" + JSONObject.toJSONString(map));
+            /**
+             * 对微信发来的请求做出响应
+             */
+            result = requestAndResponseService.buildResponseMessage(map);
+            System.out.println(result);
+            if (result.equals("")) {
+                result = "未正确响应";
+            }
+        } catch (Exception e) {
+            log.error("发生异常：", e);            
+            result = "未正确响应";
+        }
+        response.getWriter().println(result);
+    }
+
+    @GetMapping(value = "/api/test")
+    String test(@RequestParam(value = "req") String req) {
+//        requestReplyMsgService.getChp();
+//        requestReplyMsgService.getRobotChat(req);
+        return "success";
     }
 
     public String wxSignatureCheck(String signature, String timestamp, String nonce, String echostr) {
