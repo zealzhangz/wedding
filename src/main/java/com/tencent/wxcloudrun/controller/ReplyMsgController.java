@@ -71,6 +71,7 @@ public class ReplyMsgController {
     String test(@RequestParam(value = "req") String req) {
 //        requestReplyMsgService.getChp();
 //        requestReplyMsgService.getRobotChat(req);
+//        requestReplyMsgService.getRobotOwnThink(req);
         return "success";
     }
 

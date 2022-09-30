@@ -162,7 +162,10 @@ public class RequestAndResponseService {
 //                responseMessage = buildVideoMessage(map, video);
 //                break;
             default:
-                msgText = requestReplyMsgService.getRobotChat(content);
+                msgText = requestReplyMsgService.getRobotOwnThink(content);
+                if(msgText == null){
+                    msgText = requestReplyMsgService.getRobotChat(content);
+                }
                 responseMessage = buildWelcomeTextMessage(map, msgText);
                 break;
 
